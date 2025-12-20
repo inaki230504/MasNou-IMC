@@ -20,7 +20,7 @@ fun tablaEspera(
     vm: TorneoViewModel
 ) {
     var name by remember { mutableStateOf("") }
-    Column (modifier = Modifier.fillMaxWidth(0.5f).padding(end = 20.dp).fillMaxHeight()) {
+    Column (modifier = Modifier.fillMaxWidth(0.6f).padding(end = 20.dp).fillMaxHeight()) {
         Text(
             "Añadir jugador",
             fontSize = 30.sp,

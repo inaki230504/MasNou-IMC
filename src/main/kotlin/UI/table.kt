@@ -36,7 +36,7 @@ fun table(
     onTick: () -> Unit,
     vm: TorneoViewModel
 ){
-    Column (verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight()){
+    Column (verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth(0.6f).fillMaxHeight()){
         TimerHours(seconds, paused, onTick = onTick)
         Row (
             horizontalArrangement = Arrangement.SpaceBetween,
