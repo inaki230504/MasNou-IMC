@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
@@ -108,14 +109,14 @@ fun table(
 
             ) {
 
-            items(vm.mesas) { mesa ->
+            itemsIndexed(vm.mesas) { index ,mesa ->
                 Card{
 
                     Row (modifier = Modifier.fillMaxWidth().padding(start = 25.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ){
 
-                        Text("${mesa.id}.",
+                        Text("${index+1}.",
                             modifier = Modifier.weight(0.5f),
                             fontSize = 25.sp
                         )

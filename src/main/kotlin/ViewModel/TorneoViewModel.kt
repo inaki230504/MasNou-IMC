@@ -79,7 +79,9 @@ class TorneoViewModel {
 
             if (jugador.id in activos) {
                 jugador.copy(estado = ( mutableStateOf(stadoPrimary.Activo)))
-            } else jugador
+            } else {
+                jugador.copy(estado = (mutableStateOf(stadoPrimary.Cola)))
+            }
         }
     }
 

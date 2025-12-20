@@ -6,6 +6,7 @@ import match
 import player
 import tables
 import updatePlayer
+import updateResultado
 
 
 fun finalizarPartida(
@@ -14,7 +15,7 @@ fun finalizarPartida(
     vm: TorneoViewModel
 ){
     val matchActual = mesa.match ?: return
-
+    updateResultado(mesa.id,resultado, stadoMatch.Finalizado)
     val nuevoMatch: match?
     when (resultado) {
         "1-0" -> {
@@ -26,7 +27,8 @@ fun finalizarPartida(
             updatePlayer(ganador)
             updatePlayer(perdedor)
 
-            nuevoMatch = match(ganador, vm.jugadores.firstOrNull { it.estado.value == stadoPrimary.Cola } ?: return)
+            nuevoMatch = match(ganador, vm.jugadoresCola.removeFirst())
+            vm.jugadoresCola.addLast(perdedor)
         }
 
         "0-1" -> {
@@ -38,7 +40,8 @@ fun finalizarPartida(
             updatePlayer(ganador)
             updatePlayer(perdedor)
 
-            nuevoMatch = match(ganador, vm.jugadores.firstOrNull { it.estado.value == stadoPrimary.Cola } ?: return)
+            nuevoMatch = match(ganador, vm.jugadoresCola.removeFirst())
+            vm.jugadoresCola.addLast(perdedor)
         }
 
         "1/2-1/2" -> {
@@ -47,11 +50,12 @@ fun finalizarPartida(
 
             negroAnterior.estado.value = stadoPrimary.Activo
             blancoAnterior.estado.value = stadoPrimary.Cola
+
             updatePlayer(blancoAnterior)
             updatePlayer(negroAnterior)
 
-            nuevoMatch =
-                match(negroAnterior, vm.jugadores.firstOrNull { it.estado.value == stadoPrimary.Cola } ?: return)
+            nuevoMatch = match(negroAnterior, vm.jugadoresCola.removeFirst())
+            vm.jugadoresCola.addLast(blancoAnterior)
         }
 
         else -> return
