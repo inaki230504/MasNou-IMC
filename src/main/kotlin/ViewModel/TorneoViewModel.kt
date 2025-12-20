@@ -1,9 +1,6 @@
 package ViewModel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import getListaPlayers
 import getMesas
 import insertarJugador
@@ -24,18 +21,43 @@ class TorneoViewModel {
     var mesas by mutableStateOf(getMesas())
         private set
 
-    var jugadoresCola = mutableStateOf(ArrayDeque<player>(jugadores.filter { it -> it.estado.value == stadoPrimary.Cola }))
-    var jugadoresInactivos = mutableStateOf(jugadores.filter { it -> it.estado.value == stadoPrimary.Inactivo })
+    var jugadoresCola by mutableStateOf( ArrayDeque<player>())
 
-    fun agregarJugador(nuevo: player) {
-        insertarJugador(nuevo.nombre)
+    val jugadoresInactivos: List<player>
+        get() = jugadores.filter { it.estado.value == stadoPrimary.Inactivo }
+
+
+    fun agregarJugador(nuevo: String) {
+
+        jugadoresCola = ArrayDeque(jugadoresCola).apply {
+            addLast(player(insertarJugador(nuevo),nuevo,mutableStateOf(stadoPrimary.Cola)
+            ))
+        }
+        jugadores = getListaPlayers()
+
     }
-    fun cambiarEstado(jugadorId: Int?, nuevoEstado: stadoPrimary) {
-        jugadores = jugadores.map {
-            if (it.id == jugadorId) it.copy(estado = mutableStateOf(nuevoEstado))
-            else it
+    fun cambiarEstado(jugador: player, nuevoEstado: stadoPrimary) {
+        // 1️⃣ Persistencia
+        updatePlayer(
+            player(jugador.id, jugador.nombre, mutableStateOf(nuevoEstado))
+        )
+
+        // 2️⃣ Refrescamos snapshot
+        jugadores = getListaPlayers()
+
+        // 3️⃣ Obtenemos la instancia REAL
+        val actualizado = jugadores.firstOrNull { it.id == jugador.id } ?: return
+
+        // 4️⃣ Actualizamos FIFO (SIEMPRE reasignando)
+        jugadoresCola = ArrayDeque(jugadoresCola).apply {
+            removeIf { it.id == actualizado.id }
+
+            if (nuevoEstado == stadoPrimary.Cola) {
+                addLast(actualizado)
+            }
         }
     }
+
 
 
 
@@ -69,7 +91,7 @@ class TorneoViewModel {
         val mesasActivas = mesas.size
         val mesasAcrear = (numMesas - mesasActivas).coerceAtLeast(0)
 
-        if (mesasAcrear <= 0 || jugadoresCola.value.size < 2) return
+        if (mesasAcrear <= 0 || jugadoresCola.size < 2) return
 
         generarMesas(mesasAcrear)
     }

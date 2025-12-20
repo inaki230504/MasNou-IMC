@@ -38,14 +38,21 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
     var inicio by remember { mutableStateOf(true) }
     var startTournament by remember { mutableStateOf(0) }
     var mesasIniciadas by remember { mutableStateOf(false) }
-
+    var cola by remember { mutableStateOf(true) }
 
     LaunchedEffect(startTournament) {
-        if (!mesasIniciadas && vm.jugadoresCola.value.size >= 2) {
+        if (!mesasIniciadas && vm.jugadoresCola.size >= 2) {
             vm.iniciarTorneo(numMesas)
             mesasIniciadas = true
         }
     }
+    if (cola) {
+        cola = false
+        val nuevaCola = ArrayDeque(vm.jugadoresCola)
+        nuevaCola.addAll(vm.jugadores.filter { it.estado.value == stadoPrimary.Cola })
+        vm.jugadoresCola = nuevaCola
+    }
+
 
 
 

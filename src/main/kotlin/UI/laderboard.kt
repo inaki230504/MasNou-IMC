@@ -100,10 +100,7 @@ fun ladderBoard( vm: TorneoViewModel) {
                                         stadoPrimary.Cola
                                     }
 
-                                    vm.cambiarEstado(players.id, nuevoEstado)
-
-
-                                    updatePlayer(players)
+                                    vm.cambiarEstado(players, nuevoEstado)
                                 }
                             },
                             modifier = Modifier.weight(1f),

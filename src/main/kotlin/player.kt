@@ -22,7 +22,8 @@ fun getListaPlayers() : List<player>{
                 val id = rs.getInt("ID")
                 val nombre = rs.getString("Nombre")
                 val estado = getStado(rs.getString("Estado"))
-                tipos.add(player(id, nombre, estado))
+                val puntos = rs.getDouble("Puntuacion")
+                tipos.add(player(id, nombre, estado,puntos))
             }
         }
     } ?: println("La conexion no se ha podido establecer")
@@ -49,10 +50,11 @@ fun getPlayer(id: Int): player? {
 fun insertarJugador(name: String): Int? {
     var generatedId: Int? = null
     getConnection()?.use { conn ->
-        val sql = "INSERT INTO jugadores (nombre, Estado) VALUES (?, ?)"
+        val sql = "INSERT INTO jugadores (nombre, Estado, puntuacion) VALUES (?, ?, ?)"
         conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS).use { pstmt ->
             pstmt.setString(1, name)
             pstmt.setString(2, stadoPrimary.Cola.name)
+            pstmt.setDouble(3, 0.0)
             val affectedRows = pstmt.executeUpdate()
 
             if (affectedRows == 0) {
@@ -68,6 +70,7 @@ fun insertarJugador(name: String): Int? {
         }
     } ?: println("No se pudo establecer la conexión")
     return generatedId
+
 }
 
 

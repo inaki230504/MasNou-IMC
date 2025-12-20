@@ -36,12 +36,10 @@ fun tablaEspera(
         )
         Button(
             onClick = {
-                var id = insertarJugador(name)
-                if (id != null) {
-                    getPlayer(id)?.let { nuevojugador ->
-                        vm.agregarJugador(nuevojugador)
-                    }
-                }
+
+                    vm.agregarJugador(name)
+                name = ""
+
             },
             colors = ButtonDefaults.buttonColors(Color(0xFFFFA500))
         ) {
@@ -55,7 +53,7 @@ fun tablaEspera(
             modifier = Modifier.border(1.dp, Color.Black).fillMaxHeight(0.7f).fillMaxWidth().weight(0.5f)
 
         ) {
-            itemsIndexed(vm.jugadoresCola.value) { index, play ->
+            itemsIndexed(vm.jugadoresCola) { index, play ->
 
                 Card(modifier = Modifier.fillMaxWidth()){
                     Row {
@@ -80,7 +78,7 @@ fun tablaEspera(
                 modifier = Modifier.border(1.dp, Color.Black).fillMaxHeight(0.15f).fillMaxWidth()
 
             ) {
-                itemsIndexed(vm.jugadoresInactivos.value) { index, play ->
+                itemsIndexed(vm.jugadoresInactivos) { index, play ->
 
                     Card(modifier = Modifier.fillMaxWidth()
 
