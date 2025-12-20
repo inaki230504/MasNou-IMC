@@ -84,7 +84,7 @@ fun table(
             Text(
                 "Mesa",
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.weight(0.3f),
+                modifier = Modifier.weight(0.5f),
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
 
