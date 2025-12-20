@@ -80,7 +80,7 @@ fun tablaEspera(
                 modifier = Modifier.border(1.dp, Color.Black).fillMaxHeight(0.15f).fillMaxWidth()
 
             ) {
-                itemsIndexed(vm.jugadoresInactivos) { index, play ->
+                itemsIndexed(vm.jugadoresInactivos.value) { index, play ->
 
                     Card(modifier = Modifier.fillMaxWidth()
 

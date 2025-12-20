@@ -24,7 +24,7 @@ import updatePlayer
 
 @Composable
 fun ladderBoard( vm: TorneoViewModel) {
-    Column (modifier = Modifier.padding(start = 10.dp).fillMaxWidth(0.2f)){
+    Column (modifier = Modifier.padding(start = 10.dp).fillMaxWidth(0.25f)){
         Text(
             "Clasificación",
             fontSize = 50.sp,
@@ -46,12 +46,12 @@ fun ladderBoard( vm: TorneoViewModel) {
             Text(
                 "Nombre",
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(1.5f),
                 textAlign = TextAlign.Start,
                 fontSize = 15.sp
             )
             Text(
-                "Puntuación",
+                "Puntos",
                 fontFamily = FontFamily.Monospace,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
@@ -102,7 +102,6 @@ fun ladderBoard( vm: TorneoViewModel) {
 
                                     vm.cambiarEstado(players.id, nuevoEstado)
 
-                                    vm.changeTable(players)
 
                                     updatePlayer(players)
                                 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import getListaPlayers
 import getMesas
+import insertarJugador
 import insertarMach
 import match
 import player
@@ -23,30 +24,19 @@ class TorneoViewModel {
     var mesas by mutableStateOf(getMesas())
         private set
 
-    var jugadoresCola = mutableStateOf(ArrayDeque<player>())
-    var jugadoresInactivos = mutableStateListOf<player>()
+    var jugadoresCola = mutableStateOf(ArrayDeque<player>(jugadores.filter { it -> it.estado.value == stadoPrimary.Cola }))
+    var jugadoresInactivos = mutableStateOf(jugadores.filter { it -> it.estado.value == stadoPrimary.Inactivo })
 
     fun agregarJugador(nuevo: player) {
-        jugadores = jugadores + nuevo // crea nueva lista para disparar recompose
+        insertarJugador(nuevo.nombre)
     }
-
     fun cambiarEstado(jugadorId: Int?, nuevoEstado: stadoPrimary) {
         jugadores = jugadores.map {
             if (it.id == jugadorId) it.copy(estado = mutableStateOf(nuevoEstado))
             else it
         }
     }
-    fun changeTable(jugador: player) {
-        if (jugador.estado.value == stadoPrimary.Cola) {
-            jugadoresInactivos.remove(jugador)
-            jugadoresCola.value.addLast(jugador)
-            jugador.estado.value = stadoPrimary.Cola
-        } else {
-            jugadoresCola.value.remove(jugador)
-            jugadoresInactivos.add(jugador)
-            jugador.estado.value = stadoPrimary.Inactivo
-        }
-    }
+
 
 
 
@@ -93,7 +83,6 @@ class TorneoViewModel {
             mesas = mesas + tables(id = rank, match = null, estado = stadoMatch.EnProgreso)
         }
 
-        // Asignar jugadores en orden FIFO a mesas existentes
         mesas = mesas.map { mesa ->
             if (mesa.match == null) {
                 val j1 = cola.removeFirst()
@@ -102,7 +91,6 @@ class TorneoViewModel {
             } else mesa
         }
 
-        // Actualizar jugadores activos
         val activosIds = mesas
             .flatMap { listOfNotNull(it.match?.jugador1, it.match?.jugador2) }
             .mapNotNull { it.id }
@@ -112,7 +100,6 @@ class TorneoViewModel {
             if (it.id in activosIds) it.copy(estado = mutableStateOf( stadoPrimary.Activo)) else it
         }
 
-        // Persistencia
         mesas.filter { it.match != null }.forEach { insertarMach(it) }
         jugadores.filter { it.id in activosIds }.forEach { updatePlayer(it) }
     }
