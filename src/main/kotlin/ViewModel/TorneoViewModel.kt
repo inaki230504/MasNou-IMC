@@ -12,6 +12,8 @@ import removeAllPlayers
 import stadoPrimary
 import tables
 import updatePlayer
+import updateResultado
+import updateScore
 
 class TorneoViewModel {
 
@@ -24,31 +26,27 @@ class TorneoViewModel {
     var jugadoresCola by mutableStateOf( ArrayDeque<player>())
 
     val jugadoresInactivos: List<player>
-        get() = jugadores.filter { it.estado.value == stadoPrimary.Inactivo }
+        get() = jugadores.filter { it.estado == stadoPrimary.Inactivo }
 
 
     fun agregarJugador(nuevo: String) {
 
         jugadoresCola = ArrayDeque(jugadoresCola).apply {
-            addLast(player(insertarJugador(nuevo),nuevo,mutableStateOf(stadoPrimary.Cola)
+            addLast(player(insertarJugador(nuevo),nuevo,(stadoPrimary.Cola)
             ))
         }
         jugadores = getListaPlayers()
 
     }
     fun cambiarEstado(jugador: player, nuevoEstado: stadoPrimary) {
-        // 1️⃣ Persistencia
         updatePlayer(
-            player(jugador.id, jugador.nombre, mutableStateOf(nuevoEstado))
+            player(jugador.id, jugador.nombre, (nuevoEstado))
         )
 
-        // 2️⃣ Refrescamos snapshot
         jugadores = getListaPlayers()
 
-        // 3️⃣ Obtenemos la instancia REAL
         val actualizado = jugadores.firstOrNull { it.id == jugador.id } ?: return
 
-        // 4️⃣ Actualizamos FIFO (SIEMPRE reasignando)
         jugadoresCola = ArrayDeque(jugadoresCola).apply {
             removeIf { it.id == actualizado.id }
 
@@ -71,16 +69,16 @@ class TorneoViewModel {
         jugadores = jugadores.map { jugador ->
             when{
                 jugador.id in activos ->
-                        jugador.copy(estado = ( mutableStateOf(stadoPrimary.Activo)))
-                jugador.estado == mutableStateOf( stadoPrimary.Activo) ->
-                    jugador.copy(estado = mutableStateOf(stadoPrimary.Cola))
+                        jugador.copy(estado = ( (stadoPrimary.Activo)))
+                jugador.estado == ( stadoPrimary.Activo) ->
+                    jugador.copy(estado = (stadoPrimary.Cola))
             }
 
 
             if (jugador.id in activos) {
-                jugador.copy(estado = ( mutableStateOf(stadoPrimary.Activo)))
+                jugador.copy(estado = ( (stadoPrimary.Activo)))
             } else {
-                jugador.copy(estado = (mutableStateOf(stadoPrimary.Cola)))
+                jugador.copy(estado = ((stadoPrimary.Cola)))
             }
         }
     }
@@ -99,7 +97,7 @@ class TorneoViewModel {
     }
 
     fun generarMesas(numMesas: Int) {
-        val cola = ArrayDeque(jugadores.filter { it.estado.value == stadoPrimary.Cola })
+        val cola = ArrayDeque(jugadores.filter { it.estado == stadoPrimary.Cola })
 
         // Si no hay mesas suficientes, creamos mesas vacías hasta llegar al número
         while (mesas.size < numMesas) {
@@ -121,7 +119,7 @@ class TorneoViewModel {
             .toSet()
 
         jugadores = jugadores.map {
-            if (it.id in activosIds) it.copy(estado = mutableStateOf( stadoPrimary.Activo)) else it
+            if (it.id in activosIds) it.copy(estado = ( stadoPrimary.Activo)) else it
         }
 
         mesas.filter { it.match != null }.forEach { insertarMach(it) }
@@ -130,6 +128,51 @@ class TorneoViewModel {
     fun reiniciar(){
         removeAllMesas()
         removeAllPlayers()
-
+        refrescarMesas()
+        jugadores = getListaPlayers()
+        jugadoresCola = ArrayDeque()
     }
+    fun finalizarPartida(mesa: tables, resultado: String) {
+        val match = mesa.match ?: return
+        var puntos : Double = 0.0
+        updateResultado(mesa.id, resultado)
+
+        val (ganador, perdedor) = when (resultado) {
+            "1-0" -> match.jugador1 to match.jugador2
+            "0-1" -> match.jugador2 to match.jugador1
+            "1/2-1/2" -> match.jugador2 to match.jugador1
+            else -> return
+        }
+
+        when(resultado){
+            "1-0" -> puntos = 1.0
+            "0-1" -> puntos = 1.0
+            "1/2-1/2" -> puntos = 0.5
+            else -> return
+        }
+        updateScore(ganador,puntos)
+        if(resultado.equals("1/2-1/2")){
+            updateScore(perdedor,puntos)
+        }
+
+        cambiarEstado(perdedor, stadoPrimary.Cola)
+
+        cambiarEstado(ganador, stadoPrimary.Activo)
+
+        val siguiente = jugadoresCola.firstOrNull()
+        if (siguiente != null) {
+            jugadoresCola = ArrayDeque(jugadoresCola).apply { removeFirst() }
+            cambiarEstado(siguiente, stadoPrimary.Activo)
+            mesa.match = match(ganador, siguiente)
+        } else {
+            mesa.match = null
+        }
+
+        mesa.estado = stadoMatch.EnProgreso
+        insertarMach(mesa)
+
+        refrescarMesas()
+    }
+
+
 }

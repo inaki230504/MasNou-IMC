@@ -25,9 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import business.finalizarPartida
-import player
-import tables
 
 @Composable
 fun table(
@@ -132,7 +129,7 @@ fun table(
                             modifier = Modifier.weight(4f)) {
                             Button(
                                 onClick = {mesa.match?.let {
-                                    finalizarPartida(mesa, "1-0",vm)
+                                    vm.finalizarPartida(mesa, "1-0")
 
                                 }},
                                 colors = ButtonDefaults.buttonColors(
@@ -157,7 +154,7 @@ fun table(
                             }
                             Button(
                                 onClick = {  mesa.match?.let {
-                                    finalizarPartida(mesa, "1/2-1/2", vm)
+                                    vm.finalizarPartida(mesa, "1/2-1/2")
                                 }},
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = Color(0xFFFFA500)
@@ -180,7 +177,7 @@ fun table(
                             }
                             Button(
                                 onClick = {mesa.match?.let {
-                                    finalizarPartida(mesa, "0-1", vm)
+                                    vm.finalizarPartida(mesa, "0-1")
                                 }},
                                 colors = ButtonDefaults.buttonColors( Color(0xFF4F4F4F))
                             ) {

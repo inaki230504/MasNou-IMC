@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogWindow
+import insertMesas
 import insertarMach
 import player
 import removeAllMesas
@@ -49,7 +50,7 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
     if (cola) {
         cola = false
         val nuevaCola = ArrayDeque(vm.jugadoresCola)
-        nuevaCola.addAll(vm.jugadores.filter { it.estado.value == stadoPrimary.Cola })
+        nuevaCola.addAll(vm.jugadores.filter { it.estado == stadoPrimary.Cola })
         vm.jugadoresCola = nuevaCola
     }
 
@@ -117,8 +118,7 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
 
                     DropdownMenuItem(
                         onClick = {
-                            removeAllPlayers()
-                            removeAllMesas()
+                          vm.reiniciar()
 
                             inicio = false
                         }
@@ -213,7 +213,7 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
                                     if (mesasIniciadas && nuevoNum > vm.mesas.size) {
                                         startTournament++   // 🔥 SOLO ESTO
                                     }
-
+                                    insertMesas( nuevoNum)
                                     numMesas = nuevoNum
                                 }
                             }) {

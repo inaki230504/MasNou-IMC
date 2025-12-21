@@ -93,8 +93,8 @@ fun ladderBoard( vm: TorneoViewModel) {
 
                         Button(
                             onClick = {
-                                if (players.estado.value != stadoPrimary.Activo) {
-                                    val nuevoEstado = if (players.estado.value == stadoPrimary.Cola) {
+                                if (players.estado != stadoPrimary.Activo) {
+                                    val nuevoEstado = if (players.estado == stadoPrimary.Cola) {
                                         stadoPrimary.Inactivo
                                     } else {
                                         stadoPrimary.Cola
@@ -105,7 +105,7 @@ fun ladderBoard( vm: TorneoViewModel) {
                             },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = when (players.estado.value) {
+                                backgroundColor = when (players.estado) {
                                     stadoPrimary.Activo -> Color.Green
                                     stadoPrimary.Cola -> Color.Gray
                                     stadoPrimary.Inactivo -> Color.Red
@@ -113,7 +113,7 @@ fun ladderBoard( vm: TorneoViewModel) {
                             )
                         ) {
                             Text(
-                                players.estado.value.name,
+                                players.estado.name,
                                 fontSize = 10.sp
                             )
                         }

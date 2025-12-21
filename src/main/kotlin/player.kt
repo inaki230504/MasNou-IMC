@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import java.sql.SQLException
 
 
-data class player(val id: Int?, val nombre:String, var estado: MutableState<stadoPrimary>, var puntos: Double? = 0.0)
+data class player(val id: Int?, val nombre:String, var estado: stadoPrimary, var puntos: Double? = 0.0)
 
 enum class stadoPrimary(estado : String){
     Activo("Activo"),
@@ -12,6 +12,27 @@ enum class stadoPrimary(estado : String){
     Cola("En Cola")
 }
 
+fun updateScore(jugador: player, puntosASumar: Double) {
+    getConnection()?.use { conn ->
+        val selectSql = "SELECT Puntuacion FROM jugadores WHERE Id = ?"
+        val puntuacionActual = conn.prepareStatement(selectSql).use { pstmt ->
+            pstmt.setInt(1, jugador.id ?: return)
+            pstmt.executeQuery().use { rs ->
+                if (rs.next()) rs.getDouble("Puntuacion") else 0.0
+            }
+        }
+
+        val nuevaPuntuacion = puntuacionActual + puntosASumar
+        val updateSql = "UPDATE jugadores SET Puntuacion = ? WHERE Id = ?"
+        conn.prepareStatement(updateSql).use { pstmt ->
+            pstmt.setDouble(1, nuevaPuntuacion)
+            pstmt.setInt(2, jugador.id!!)
+            pstmt.executeUpdate()
+        }
+
+        println("Puntuación de ${jugador.nombre} actualizada: $puntuacionActual + $puntosASumar = $nuevaPuntuacion")
+    } ?: println("No se pudo establecer conexión con la base de datos")
+}
 
 fun getListaPlayers() : List<player>{
     val tipos = mutableListOf<player>()
@@ -74,11 +95,11 @@ fun insertarJugador(name: String): Int? {
 }
 
 
-fun getStado(estado: String): MutableState<stadoPrimary> {
+fun getStado(estado: String): stadoPrimary {
     return when (estado) {
-        stadoPrimary.Inactivo.name -> mutableStateOf(stadoPrimary.Inactivo)
-        stadoPrimary.Activo.name -> mutableStateOf(stadoPrimary.Activo)
-        else -> mutableStateOf(stadoPrimary.Cola)
+        stadoPrimary.Inactivo.name -> (stadoPrimary.Inactivo)
+        stadoPrimary.Activo.name -> (stadoPrimary.Activo)
+        else -> (stadoPrimary.Cola)
     }
 }
 
@@ -88,15 +109,14 @@ fun updatePlayer(player: player) {
     getConnection()?.use { conn ->
         val sql = """
             UPDATE jugadores 
-            SET Nombre = ?, Estado = ?, Puntuacion = ?
+            SET Nombre = ?, Estado = ?
             WHERE ID = ?
         """.trimIndent()
 
         conn.prepareStatement(sql).use { pstmt ->
             pstmt.setString(1, player.nombre)
-            pstmt.setString(2, player.estado.value.name)
-            pstmt.setDouble(3, player.puntos ?: 0.0)
-            pstmt.setInt(4, player.id)
+            pstmt.setString(2, player.estado.name)
+            pstmt.setInt(3, player.id)
             pstmt.executeUpdate()
         }
     }
