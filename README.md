@@ -12,6 +12,12 @@ Para empezar un torneo, sigue estos pasos:
    - Tiempo de duración de las partidas
 3. Ir a **Ajustes → Iniciar** para realizar los emparejamientos automáticamente.
 
+## Requisitos
+
+- JDK 20 o superior
+- Kotlin
+- Gradle
+
 ## Estado Actual de la Aplicación
 
 La aplicación todavía está en desarrollo. Actualmente se puede:  
