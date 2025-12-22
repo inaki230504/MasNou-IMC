@@ -14,7 +14,7 @@ Para empezar un torneo, sigue estos pasos:
 
 ## Requisitos
 
-- JDK 20 o superior
+- JDK 20
 - Kotlin
 - Gradle
 
