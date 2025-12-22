@@ -99,7 +99,6 @@ class TorneoViewModel {
     fun generarMesas(numMesas: Int) {
         val cola = ArrayDeque(jugadores.filter { it.estado == stadoPrimary.Cola })
 
-        // Si no hay mesas suficientes, creamos mesas vacías hasta llegar al número
         while (mesas.size < numMesas) {
             val rank = mesas.size + 1
             mesas = mesas + tables(id = rank, match = null, estado = stadoMatch.EnProgreso)
