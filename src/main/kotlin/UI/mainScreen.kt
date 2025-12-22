@@ -108,8 +108,8 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
                     DropdownMenuItem(
                         onClick = {
                             inicio = false
-                            mesasIniciadas = false  // 🔹 Resetear para que LaunchedEffect cree mesas
-                            startTournament++       // Dispara LaunchedEffect
+                            mesasIniciadas = false  
+                            startTournament++    
                             dropmenu = false
                         }
                     ) {
@@ -195,7 +195,6 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
                             Button(onClick = {
                                 showdialog = false
 
-                                // ⏱ Tiempo
                                 if (
                                     hora.toIntOrNull() != null &&
                                     minuto.toIntOrNull() != null &&
@@ -206,12 +205,11 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
                                             segundos.toInt()
                                 }
 
-                                // 🪑 Mesas
                                 if (compNMesa.toIntOrNull() != null) {
                                     val nuevoNum = compNMesa.toInt()
 
                                     if (mesasIniciadas && nuevoNum > vm.mesas.size) {
-                                        startTournament++   // 🔥 SOLO ESTO
+                                        startTournament++  
                                     }
                                     insertMesas( nuevoNum)
                                     numMesas = nuevoNum
@@ -234,7 +232,6 @@ fun mainScreen(modifier: Modifier,vm: TorneoViewModel) {
             ladderBoard( vm)
 
 
-            //mesa
             table(
                 second, paused,
                 onVisible = { isVisible: Boolean ->
