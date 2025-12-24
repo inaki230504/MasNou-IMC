@@ -61,26 +61,27 @@ class TorneoViewModel {
 
 
     fun sincronizarEstadosConMesas() {
-        val activos = mesas
+        val activosIds = mesas
             .flatMap { listOfNotNull(it.match?.jugador1, it.match?.jugador2) }
-            .map { it.id }
+            .mapNotNull { it.id }
             .toSet()
 
         jugadores = jugadores.map { jugador ->
-            when{
-                jugador.id in activos ->
-                        jugador.copy(estado = ( (stadoPrimary.Activo)))
-                jugador.estado == ( stadoPrimary.Activo) ->
-                    jugador.copy(estado = (stadoPrimary.Cola))
-            }
+            when {
+                jugador.estado == stadoPrimary.Inactivo ->
+                    jugador
 
+                jugador.id in activosIds ->
+                    jugador.copy(estado = stadoPrimary.Activo)
 
-            if (jugador.id in activos) {
-                jugador.copy(estado = ( (stadoPrimary.Activo)))
-            } else {
-                jugador.copy(estado = ((stadoPrimary.Cola)))
+                else ->
+                    jugador.copy(estado = stadoPrimary.Cola)
             }
         }
+
+        jugadoresCola = ArrayDeque(
+            jugadores.filter { it.estado == stadoPrimary.Cola }
+        )
     }
 
     fun refrescarMesas() {
@@ -111,6 +112,7 @@ class TorneoViewModel {
                 mesa.copy(match = match(j1, j2), estado = stadoMatch.EnProgreso)
             } else mesa
         }
+        jugadoresCola = cola
 
         val activosIds = mesas
             .flatMap { listOfNotNull(it.match?.jugador1, it.match?.jugador2) }
@@ -123,6 +125,8 @@ class TorneoViewModel {
 
         mesas.filter { it.match != null }.forEach { insertarMach(it) }
         jugadores.filter { it.id in activosIds }.forEach { updatePlayer(it) }
+
+
     }
     fun reiniciar(){
         removeAllMesas()

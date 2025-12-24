@@ -99,7 +99,6 @@ fun ladderBoard( vm: TorneoViewModel) {
                                     } else {
                                         stadoPrimary.Cola
                                     }
-
                                     vm.cambiarEstado(players, nuevoEstado)
                                 }
                             },
