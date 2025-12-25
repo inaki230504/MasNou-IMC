@@ -78,12 +78,7 @@ class TorneoViewModel {
                     jugador.copy(estado = stadoPrimary.Cola)
             }
         }
-
-        jugadoresCola = ArrayDeque(
-            jugadores.filter { it.estado == stadoPrimary.Cola }
-        )
     }
-
     fun refrescarMesas() {
         mesas = getMesas()
         sincronizarEstadosConMesas()
@@ -159,7 +154,6 @@ class TorneoViewModel {
         }
 
         cambiarEstado(perdedor, stadoPrimary.Cola)
-
         cambiarEstado(ganador, stadoPrimary.Activo)
 
         val siguiente = jugadoresCola.firstOrNull()
